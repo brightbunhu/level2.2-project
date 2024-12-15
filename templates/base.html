@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BizNest - Business Communication Platform{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .navbar-nav {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.9) !important;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: white !important;
+        }
+
+        .main-content {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            background: #1e3c72;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="{% url 'rooms' %}" class="navbar-brand">BizNest</a>
+            <div class="navbar-nav">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'rooms' %}" class="nav-link">Rooms</a>
+                    <a href="{% url 'search' %}" class="nav-link">Search</a>
+                    <a href="{% url 'profile_settings' %}" class="nav-link">Language Settings</a>
+                    <a href="{% url 'developers' %}" class="nav-link">Our Team</a>
+                    <a href="{% url 'feedback' %}" class="nav-link">Feedback</a>
+                    <span class="nav-link">{{ user.username }}</span>
+                    <a href="{% url 'logout_view' %}" class="nav-link">Logout</a>
+                {% else %}
+                    <a href="{% url 'login_view' %}" class="nav-link">Login</a>
+                    <a href="{% url 'register' %}" class="nav-link">Register</a>
+                    <a href="{% url 'developers' %}" class="nav-link">Our Team</a>
+                {% endif %}
+                {% if user.is_staff %}
+                    <a href="{% url 'admin_dashboard' %}" class="nav-link">Dashboard</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2024 BizNest. All rights reserved.</p>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+
+    <style>
+        .messages {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid transparent;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        .alert-warning {
+            background-color: #fff3cd;
+            border-color: #ffeeba;
+            color: #856404;
+        }
+
+        .alert-info {
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
+        }
+    </style>
+</body>
+</html>

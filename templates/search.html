@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="search-results">
+    <h2>Search Results</h2>
+    {% if query %}
+        <p>Results for: "{{ query }}"</p>
+    {% endif %}
+    
+    {% if results %}
+        <div class="results-list">
+            {% for room in results %}
+                <div class="result-item">
+                    <h3>{{ room.name }}</h3>
+                    <a href="{% url 'room' room.id %}" class="join-btn">Join Room</a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No rooms found.</p>
+    {% endif %}
+</div>
+
+<style>
+    .search-results {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+    }
+    
+    .result-item {
+        padding: 15px;
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .join-btn {
+        padding: 8px 16px;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+    }
+    
+    .join-btn:hover {
+        background-color: #0056b3;
+    }
+</style>
+{% endblock %}

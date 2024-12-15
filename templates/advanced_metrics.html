@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="advanced-metrics-container">
+    <h1>Advanced Translation Metrics</h1>
+
+    <!-- System Overview -->
+    <div class="metric-section">
+        <h2>System Overview</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Languages</h3>
+                <p class="stat-number">{{ unique_languages }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Total Translations</h3>
+                <p class="stat-number">{{ total_translations }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Error Rate</h3>
+                <p class="stat-number">{{ error_rate|floatformat:2 }}%</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Translation Accuracy -->
+    <div class="metric-section">
+        <h2>Translation Accuracy Statistics</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Mean</h3>
+                <p class="stat-number">{{ accuracy_stats.mean|floatformat:2 }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Median</h3>
+                <p class="stat-number">{{ accuracy_stats.median|floatformat:2 }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Mode</h3>
+                <p class="stat-number">{{ accuracy_stats.mode|floatformat:2 }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Minimum</h3>
+                <p class="stat-number">{{ accuracy_stats.min|floatformat:2 }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Maximum</h3>
+                <p class="stat-number">{{ accuracy_stats.max|floatformat:2 }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Words Per Minute -->
+    <div class="metric-section">
+        <h2>Words Per Minute Statistics</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Mean WPM</h3>
+                <p class="stat-number">{{ wpm_stats.mean|floatformat:1 }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Median WPM</h3>
+                <p class="stat-number">{{ wpm_stats.median|floatformat:1 }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Mode WPM</h3>
+                <p class="stat-number">{{ wpm_stats.mode|floatformat:1 }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Min WPM</h3>
+                <p class="stat-number">{{ wpm_stats.min|floatformat:1 }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Max WPM</h3>
+                <p class="stat-number">{{ wpm_stats.max|floatformat:1 }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Model Performance Metrics -->
+    <div class="metric-section">
+        <h2>Model Performance Metrics</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>F1 Score</h3>
+                <p class="stat-number">{{ model_metrics.f1|floatformat:3 }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Precision</h3>
+                <p class="stat-number">{{ model_metrics.precision|floatformat:3 }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Recall</h3>
+                <p class="stat-number">{{ model_metrics.recall|floatformat:3 }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Accuracy</h3>
+                <p class="stat-number">{{ model_metrics.accuracy|floatformat:3 }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .advanced-metrics-container {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 20px;
+    }
+
+    .metric-section {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+
+    h1, h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .stat-card {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+    }
+
+    .stat-card h3 {
+        color: #666;
+        font-size: 0.9em;
+        margin-bottom: 10px;
+    }
+
+    .stat-number {
+        font-size: 1.8em;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %} 

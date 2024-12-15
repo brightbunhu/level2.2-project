@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="feedback-container">
+    <div class="feedback-header">
+        <h1>User Feedback</h1>
+        <div class="feedback-stats">
+            <span>Total Feedbacks: {{ total_feedbacks }}</span>
+        </div>
+    </div>
+
+    <div class="feedback-list">
+        {% for feedback in page_obj %}
+            <div class="feedback-card">
+                <div class="feedback-meta">
+                    <div class="user-info">
+                        <span class="username">{{ feedback.nameer.username }}</span>
+                        <span class="email">{{ feedback.nameer.email }}</span>
+                    </div>
+                    <span class="timestamp">{{ feedback.created_at|date:"F j, Y, g:i a" }}</span>
+                </div>
+                <div class="feedback-content">
+                    {{ feedback.feedinfo }}
+                </div>
+            </div>
+        {% empty %}
+            <div class="no-feedback">
+                No feedback received yet.
+            </div>
+        {% endfor %}
+    </div>
+
+    {% if page_obj.has_other_pages %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page=1" class="page-link">&laquo; First</a>
+                <a href="?page={{ page_obj.previous_page_number }}" class="page-link">Previous</a>
+            {% endif %}
+
+            <span class="current-page">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="page-link">Next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}" class="page-link">Last &raquo;</a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .feedback-container {
+        max-width: 1000px;
+        margin: 20px auto;
+        padding: 20px;
+    }
+
+    .feedback-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .feedback-stats {
+        background: #f8f9fa;
+        padding: 10px 20px;
+        border-radius: 20px;
+        color: #666;
+    }
+
+    .feedback-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .feedback-card {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .feedback-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .user-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .username {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .email {
+        color: #666;
+        font-size: 0.9em;
+    }
+
+    .timestamp {
+        color: #666;
+        font-size: 0.9em;
+    }
+
+    .feedback-content {
+        color: #333;
+        line-height: 1.6;
+        white-space: pre-wrap;
+    }
+
+    .no-feedback {
+        text-align: center;
+        padding: 40px;
+        background: white;
+        border-radius: 10px;
+        color: #666;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin-top: 30px;
+    }
+
+    .page-link {
+        padding: 8px 16px;
+        background: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        transition: background 0.3s;
+    }
+
+    .page-link:hover {
+        background: #0056b3;
+    }
+
+    .current-page {
+        padding: 8px 16px;
+        background: #f8f9fa;
+        border-radius: 4px;
+        color: #666;
+    }
+
+    @media (max-width: 768px) {
+        .feedback-meta {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .feedback-stats {
+            display: none;
+        }
+    }
+</style>
+{% endblock %} 

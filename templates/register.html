@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="register-container">
+    <div class="register-box">
+        <h2>Join BizNest</h2>
+        <p class="subtitle">Create your business network account</p>
+
+        <form method="post" class="register-form">
+            {% csrf_token %}
+            
+            <div class="form-section">
+                <h3>Account Information</h3>
+                {{ user_form.as_p }}
+            </div>
+
+            <div class="form-section">
+                <h3>Language Preference</h3>
+                {{ profile_form.as_p }}
+            </div>
+
+            <button type="submit" class="register-btn">Create Account</button>
+        </form>
+
+        <div class="login-link">
+            Already have an account? <a href="{% url 'login_view' %}">Login here</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .register-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 20px;
+    }
+
+    .register-box {
+        background: white;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 500px;
+    }
+
+    h2 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .subtitle {
+        text-align: center;
+        color: #666;
+        margin-bottom: 30px;
+    }
+
+    .form-section {
+        margin-bottom: 30px;
+    }
+
+    .form-section h3 {
+        color: #444;
+        margin-bottom: 15px;
+        font-size: 18px;
+    }
+
+    .register-form p {
+        margin-bottom: 15px;
+    }
+
+    .register-form label {
+        display: block;
+        margin-bottom: 5px;
+        color: #555;
+    }
+
+    .register-form input, .register-form select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    .register-btn {
+        width: 100%;
+        padding: 12px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .register-btn:hover {
+        background: #0056b3;
+    }
+
+    .login-link {
+        text-align: center;
+        margin-top: 20px;
+        color: #666;
+    }
+
+    .login-link a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .login-link a:hover {
+        text-decoration: underline;
+    }
+
+    .errorlist {
+        color: #dc3545;
+        list-style: none;
+        padding: 0;
+        margin: 5px 0;
+        font-size: 14px;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="feedback-container">
+    <div class="feedback-box">
+        <h2>Provide Feedback</h2>
+        <p class="subtitle">Help us improve our translation system</p>
+
+        <form method="post" class="feedback-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_feedinfo">Your Feedback</label>
+                {{ form.feedinfo }}
+            </div>
+            <button type="submit" class="submit-btn">Submit Feedback</button>
+        </form>
+    </div>
+</div>
+
+<style>
+    .feedback-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh;
+        padding: 20px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+
+    .feedback-box {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 600px;
+    }
+
+    h2 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .subtitle {
+        text-align: center;
+        color: #666;
+        margin-bottom: 30px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        color: #333;
+        font-weight: 500;
+    }
+
+    textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        resize: vertical;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 12px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .submit-btn:hover {
+        background: #0056b3;
+    }
+
+    .error-text {
+        color: #dc3545;
+        font-size: 0.9em;
+        margin-top: 5px;
+    }
+</style>
+{% endblock %} 

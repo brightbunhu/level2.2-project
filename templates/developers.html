@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="developers-container">
+    <h1>Meet Our Development Team</h1>
+    <p class="subtitle">The talented individuals behind BizNest</p>
+
+    <div class="developers-grid">
+        {% for dev in developers %}
+            <div class="developer-card">
+                <div class="dev-avatar">
+                    {{ dev.name|make_list|first|upper }}
+                </div>
+                <div class="dev-info">
+                    <h2>{{ dev.name }}</h2>
+                    <p class="role">{{ dev.role }}</p>
+                    <div class="contact-info">
+                        <p><strong>Email:</strong> <a href="mailto:{{ dev.email }}">{{ dev.email }}</a></p>
+                        <p><strong>Reg Number:</strong> {{ dev.reg_number }}</p>
+                        {% if dev.phone %}
+                            <p><strong>Phone:</strong> {{ dev.phone }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .developers-container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    h1 {
+        text-align: center;
+        color: #2c3e50;
+        margin-bottom: 10px;
+        font-size: 2.5em;
+    }
+
+    .subtitle {
+        text-align: center;
+        color: #7f8c8d;
+        margin-bottom: 40px;
+        font-size: 1.2em;
+    }
+
+    .developers-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        padding: 20px;
+    }
+
+    .developer-card {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        transition: transform 0.3s ease;
+    }
+
+    .developer-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .dev-avatar {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2em;
+        font-weight: bold;
+    }
+
+    .dev-info {
+        flex: 1;
+    }
+
+    .dev-info h2 {
+        color: #2c3e50;
+        margin: 0 0 5px 0;
+        font-size: 1.3em;
+    }
+
+    .role {
+        color: #3498db;
+        font-weight: 500;
+        margin-bottom: 10px;
+    }
+
+    .contact-info {
+        font-size: 0.9em;
+        color: #666;
+    }
+
+    .contact-info p {
+        margin: 5px 0;
+    }
+
+    .contact-info a {
+        color: #3498db;
+        text-decoration: none;
+    }
+
+    .contact-info a:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+        .developers-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .developer-card {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %} 

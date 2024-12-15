@@ -1,0 +1,293 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="chat-container">
+    <div class="chat-header">
+        <h2>{{ room.name }}</h2>
+        <div class="room-info">
+            <span class="connection-status" id="connection-status">Connecting...</span>
+        </div>
+    </div>
+
+    <div class="messages" id="chat-messages">
+        <!-- Messages will be added here dynamically -->
+    </div>
+
+    <div class="message-input">
+        <form id="chat-form">
+            {% csrf_token %}
+            <input type="text" id="message-input" placeholder="Type your message..." required>
+            <button type="submit" id="send-button">Send</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ room.id|json_script:"room-id" }}
+{{ request.user.username|json_script:"username" }}
+{{ request.user.userprofile.preferred_language|json_script:"user-language" }}
+
+<script>
+    const roomId = JSON.parse(document.getElementById('room-id').textContent);
+    const username = JSON.parse(document.getElementById('username').textContent);
+    const userLanguage = JSON.parse(document.getElementById('user-language').textContent);
+    
+    let chatSocket = null;
+    let reconnectAttempts = 0;
+    const maxReconnectAttempts = 5;
+    
+    function connectWebSocket() {
+        const statusElement = document.getElementById('connection-status');
+        statusElement.textContent = 'Connecting...';
+        statusElement.className = 'connection-status connecting';
+
+        chatSocket = new WebSocket(
+            `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/ws/chat/${roomId}/`
+        );
+
+        chatSocket.onopen = function() {
+            console.log('WebSocket connected');
+            statusElement.textContent = 'Connected';
+            statusElement.className = 'connection-status connected';
+            reconnectAttempts = 0;
+        };
+
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            
+            if (data.type === 'chat_message') {
+                addMessage(data);
+            } else if (data.type === 'error') {
+                showError(data.message);
+            }
+        };
+
+        chatSocket.onclose = function(e) {
+            console.log('WebSocket disconnected');
+            statusElement.textContent = 'Disconnected';
+            statusElement.className = 'connection-status disconnected';
+            
+            if (reconnectAttempts < maxReconnectAttempts) {
+                reconnectAttempts++;
+                setTimeout(connectWebSocket, 2000 * reconnectAttempts);
+            }
+        };
+
+        chatSocket.onerror = function(err) {
+            console.error('WebSocket error:', err);
+            showError('Connection error occurred');
+        };
+    }
+
+    function addMessage(data) {
+        const messagesDiv = document.getElementById('chat-messages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${data.username === username ? 'own-message' : 'other-message'}`;
+
+        const messageContent = `
+            <div class="message-header">
+                <span class="username">${data.username}</span>
+                <span class="time">${new Date(data.timestamp).toLocaleTimeString()}</span>
+            </div>
+            <div class="message-body">
+                <div class="original-text">${data.message}</div>
+                ${data.translated_message !== data.message ? 
+                    `<div class="translated-text">
+                        <span class="translation-label">Translated:</span>
+                        ${data.translated_message}
+                    </div>` : ''}
+            </div>
+        `;
+
+        messageDiv.innerHTML = messageContent;
+        messagesDiv.appendChild(messageDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    function showError(message) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.textContent = message;
+        document.getElementById('chat-messages').appendChild(errorDiv);
+        setTimeout(() => errorDiv.remove(), 5000);
+    }
+
+    document.querySelector('#chat-form').onsubmit = function(e) {
+        e.preventDefault();
+        const messageInput = document.querySelector('#message-input');
+        const message = messageInput.value.trim();
+
+        if (message && chatSocket && chatSocket.readyState === WebSocket.OPEN) {
+            chatSocket.send(JSON.stringify({
+                'message': message,
+                'username': username,
+                'source_language': userLanguage
+            }));
+            messageInput.value = '';
+            messageInput.focus();
+        }
+    };
+
+    // Initial connection
+    connectWebSocket();
+
+    // Reconnect on visibility change
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible' && 
+            (!chatSocket || chatSocket.readyState === WebSocket.CLOSED)) {
+            connectWebSocket();
+        }
+    });
+</script>
+
+<style>
+    .chat-container {
+        max-width: 1000px;
+        margin: 20px auto;
+        display: flex;
+        flex-direction: column;
+        height: 80vh;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .chat-header {
+        padding: 15px 20px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .connection-status {
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 0.9em;
+    }
+
+    .connection-status.connecting {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .connection-status.connected {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .connection-status.disconnected {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .messages {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .message {
+        max-width: 70%;
+        padding: 10px;
+        border-radius: 10px;
+        animation: fadeIn 0.3s ease-in;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .own-message {
+        align-self: flex-end;
+        background: #e3f2fd;
+    }
+
+    .other-message {
+        align-self: flex-start;
+        background: #f5f5f5;
+    }
+
+    .message-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+        font-size: 0.85em;
+    }
+
+    .username {
+        font-weight: bold;
+        color: #2c3e50;
+    }
+
+    .time {
+        color: #666;
+    }
+
+    .message-body {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .translated-text {
+        font-size: 0.9em;
+        color: #666;
+        padding-top: 5px;
+        border-top: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .translation-label {
+        font-size: 0.8em;
+        color: #888;
+        font-style: italic;
+    }
+
+    .error-message {
+        align-self: center;
+        background: #f8d7da;
+        color: #721c24;
+        padding: 10px;
+        border-radius: 5px;
+        margin: 10px 0;
+        animation: fadeIn 0.3s ease-in;
+    }
+
+    .message-input {
+        padding: 20px;
+        border-top: 1px solid #eee;
+    }
+
+    .message-input form {
+        display: flex;
+        gap: 10px;
+    }
+
+    .message-input input {
+        flex: 1;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        font-size: 15px;
+    }
+
+    .message-input button {
+        padding: 12px 24px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .message-input button:hover {
+        background: #0056b3;
+    }
+</style>
+{% endblock %}
